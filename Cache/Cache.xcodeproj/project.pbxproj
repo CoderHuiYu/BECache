@@ -22,6 +22,7 @@
 		E0874983263018550019520A /* BEOperationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0874982263018550019520A /* BEOperationQueue.swift */; };
 		E087498B26317FEF0019520A /* TestBEoperationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E087498A26317FEF0019520A /* TestBEoperationQueue.swift */; };
 		E087499C2632B3510019520A /* ThreadSafe.swift in Sources */ = {isa = PBXBuildFile; fileRef = E087499B2632B3510019520A /* ThreadSafe.swift */; };
+		E08749A82632D3AF0019520A /* SafeArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = E08749A72632D3AF0019520A /* SafeArray.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		E0874982263018550019520A /* BEOperationQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BEOperationQueue.swift; sourceTree = "<group>"; };
 		E087498A26317FEF0019520A /* TestBEoperationQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestBEoperationQueue.swift; sourceTree = "<group>"; };
 		E087499B2632B3510019520A /* ThreadSafe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafe.swift; sourceTree = "<group>"; };
+		E08749A72632D3AF0019520A /* SafeArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeArray.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +174,7 @@
 			isa = PBXGroup;
 			children = (
 				E0874982263018550019520A /* BEOperationQueue.swift */,
+				E08749A72632D3AF0019520A /* SafeArray.swift */,
 				E087499B2632B3510019520A /* ThreadSafe.swift */,
 			);
 			path = BEOperation;
@@ -316,6 +319,7 @@
 				E087490D262FD05B0019520A /* SceneDelegate.swift in Sources */,
 				E0874943262FD1560019520A /* BECache.swift in Sources */,
 				E0874983263018550019520A /* BEOperationQueue.swift in Sources */,
+				E08749A82632D3AF0019520A /* SafeArray.swift in Sources */,
 				E087499C2632B3510019520A /* ThreadSafe.swift in Sources */,
 				E087493E262FD1290019520A /* Coordinate.swift in Sources */,
 			);

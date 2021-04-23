@@ -37,17 +37,17 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        for i in 2..<100 {
-            array.append(i)
-        }
+//        for i in 2..<100 {
+//            array.append(i)
+//        }
 //        testLock()
-        testasync()
+//        testasync()
 //        ts.test()
         
 //        group_test()
         
-//        test.test()
-//        test.test2()
+        test.test()
+        test.test2()
 //        testLock()
        
     }

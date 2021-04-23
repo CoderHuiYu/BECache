@@ -21,7 +21,11 @@ protocol BEOperationReference {}
 extension NSNumber : BEOperationReference {}
 public typealias OperationItem = () -> Void
 
-class BEOperation {
+class BEOperation : Equatable {
+    static func == (lhs: BEOperation, rhs: BEOperation) -> Bool {
+        return lhs === rhs
+    }
+    
     
     var priority: BEOperationQueuePriority = .default
     lazy var workItems = [OperationItem]()
@@ -59,10 +63,10 @@ class BEOperationQueue {
     
     private var maxConcurrentOperations = 2 { didSet { maxConcurrentOperationsChanged(oldValue: oldValue) } }
     static let sharedOperationQueue = BEOperationQueue()
-    private var queueOperations = [BEOperation]()
-    private var lowPriorityOperations = [BEOperation]()
-    private var defaultPriorityOperations = [BEOperation]()
-    private var highPriorityOperations = [BEOperation]()
+    private var queueOperations = SafeArray<BEOperation>()
+    private var lowPriorityOperations = SafeArray<BEOperation>()
+    private var defaultPriorityOperations = SafeArray<BEOperation>()
+    private var highPriorityOperations = SafeArray<BEOperation>()
     
     // Queue
     private var group = DispatchGroup()
@@ -169,18 +173,18 @@ class BEOperationQueue {
     private func priorityQueueRemoved(with op: BEOperation) -> Bool {
         switch op.priority {
         case .low:
-            if lowPriorityOperations.contains(where: { $0 === op }) {
-                lowPriorityOperations.removeAll(where: { $0 === op })
+            if lowPriorityOperations.contains(elememt: op) {
+                lowPriorityOperations.remove(element: op)
                 return true
             }
         case .default:
-            if defaultPriorityOperations.contains(where: { $0 === op }) {
-                defaultPriorityOperations.removeAll(where: { $0 === op })
+            if defaultPriorityOperations.contains(elememt: op) {
+                defaultPriorityOperations.remove(element: op)
                 return true
             }
         case .high:
-            if highPriorityOperations.contains(where: { $0 === op }) {
-                highPriorityOperations.removeAll(where: { $0 === op })
+            if highPriorityOperations.contains(elememt: op) {
+                highPriorityOperations.remove(element: op)
                 return true
             }
         }
@@ -189,23 +193,23 @@ class BEOperationQueue {
     
     
     private func locked_nextOperationByQueue() -> BEOperation? {
-        let operation = queueOperations.first
+        let operation = queueOperations[0]
         locked_removeOperation(with: operation)
         return operation
     }
     private func locked_nextOperationByPriority() -> BEOperation? {
-        var op = highPriorityOperations.first
-        if op == nil { op = defaultPriorityOperations.first }
-        if op == nil { op = lowPriorityOperations.first }
+        var op = highPriorityOperations[0]
+        if op == nil { op = defaultPriorityOperations[0] }
+        if op == nil { op = lowPriorityOperations[0] }
         if op != nil { locked_removeOperation(with: op!) }
         return op
     }
     
    @discardableResult private func locked_removeOperation(with operation: BEOperation?) -> Bool {
         guard let op = operation else { return false }
-    print("---delete----\(String(describing: op.reference))")
+//    print("---delete----\(String(describing: op.reference))")
         guard priorityQueueRemoved(with: op) else { return false}
-        queueOperations.removeAll(where: { $0 === op })
+        queueOperations.remove(element: op)
         guard let identifier = op.identifier else { return false}
         identifierToOperations.removeValue(forKey: identifier)
         return true
