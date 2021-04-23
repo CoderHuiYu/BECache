@@ -203,6 +203,7 @@ class BEOperationQueue {
     
    @discardableResult private func locked_removeOperation(with operation: BEOperation?) -> Bool {
         guard let op = operation else { return false }
+    print("---delete----\(String(describing: op.reference))")
         guard priorityQueueRemoved(with: op) else { return false}
         queueOperations.removeAll(where: { $0 === op })
         guard let identifier = op.identifier else { return false}
@@ -253,8 +254,6 @@ class BEOperationQueue {
         handler()
         unlock()
     }
-    
-    
     
     private func lockOperation<T>(handler: ResultHandler<T>) -> T {
         lock()

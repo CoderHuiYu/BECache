@@ -11,7 +11,18 @@ class ViewController: UIViewController {
 
     var map: [String: Any] = [:]
     var test = TestBEOperationqueue()
-    var array = [Int]()
+    var array = [Int]() {
+        didSet {
+            pthread_mutex_lock(&mutex)
+            
+            pthread_mutex_unlock(&mutex)
+            
+        }
+    }
+    
+    
+    
+    var group = DispatchGroup()
     var serailQueue = DispatchQueue(label: "test Serial Queue")
     private lazy var mutex: pthread_mutex_t = {
         var mutex = pthread_mutex_t()
@@ -22,27 +33,104 @@ class ViewController: UIViewController {
         return mutex
     }()
     
-    
+    var ts = ThreadSafe()
     override func viewDidLoad() {
         super.viewDidLoad()
-        test.test()
-        test.test2()
+        
+        for i in 2..<100 {
+            array.append(i)
+        }
 //        testLock()
+        testasync()
+//        ts.test()
+        
+//        group_test()
+        
+//        test.test()
+//        test.test2()
+//        testLock()
+       
     }
-
+    
+    private func testasync() {
+        let queue = DispatchQueue(label: "11", attributes: .concurrent)
+        for i in 1...3 {
+            queue.async {
+                self.remove(t: i)
+            }
+        }
+        
+        for i in 4...6 {
+            queue.async {
+                self.remove(t: i)
+            }
+        }
+    }
+    
+    private func remove(t: Int) {
+        print("===\(t)")
+        pthread_mutex_lock(&mutex)
+        let num = array.removeFirst()
+        print("thread = \(Thread.current)  element == \(num) ===\(t)")
+        remove(t: t)
+        pthread_mutex_unlock(&mutex)
+    }
+    
+    
+    private func removeItem() {
+        
+    }
+    
+    private func group_test() {
+        group.enter()
+        serailQueue.async {
+            print(1)
+            self.group.leave()
+        }
+        
+        group.enter()
+        print(2)
+        group.leave()
+        
+        group.enter()
+        print(3)
+        group.leave()
+        
+        group.notify(queue: serailQueue, work: DispatchWorkItem {
+            print(4)
+        })
+        
+        
+    }
+    
+    private func testArray_set() {
+        var array = [BECache]()
+        let a = BECache()
+        array.append(a)
+        array.append(a)
+        print(array)
+        
+      
+     
+    }
     
     
     private func testLock() {
+        var array = [ 1, 2, 3 ]
         pthread_mutex_lock(&mutex)
         serailQueue.async {
-            print(1)
+            sleep(2)
+            print(array.first ?? 0)
+            array.removeFirst()
+            print(array)
+           
 //            self.serailQueue.async {
 //                print(3)
 //            }
         }
         pthread_mutex_unlock(&mutex)
         
-        print(2)
+        print(array.first ?? 0)
     }
     
     deinit {
