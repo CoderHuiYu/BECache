@@ -24,7 +24,7 @@ class ViewController: UIViewController {
     
     var group = DispatchGroup()
     var serailQueue = DispatchQueue(label: "test Serial Queue")
-    private lazy var mutex: pthread_mutex_t = {
+    private var mutex: pthread_mutex_t = {
         var mutex = pthread_mutex_t()
         var attr: pthread_mutexattr_t = pthread_mutexattr_t()
         pthread_mutexattr_init(&attr)
@@ -37,15 +37,16 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        for i in 2..<100 {
-//            array.append(i)
+//       array = [ 2, 3, 4, 5]
+//        for index in 2...100 {
+//            array.append(index)
 //        }
 //        testLock()
 //        testasync()
 //        ts.test()
         
 //        group_test()
-        
+//
         test.test()
         test.test2()
 //        testLock()
@@ -54,25 +55,24 @@ class ViewController: UIViewController {
     
     private func testasync() {
         let queue = DispatchQueue(label: "11", attributes: .concurrent)
-        for i in 1...3 {
-            queue.async {
-                self.remove(t: i)
-            }
+        queue.async {
+            self.remove(t: 1)
+        }
+        queue.async {
+            self.remove(t: 2)
+        }
+        queue.async {
+            self.remove(t: 3)
         }
         
-        for i in 4...6 {
-            queue.async {
-                self.remove(t: i)
-            }
-        }
     }
     
     private func remove(t: Int) {
+        //arraqy = [2...100]
         print("===\(t)")
         pthread_mutex_lock(&mutex)
         let num = array.removeFirst()
-        print("thread = \(Thread.current)  element == \(num) ===\(t)")
-        remove(t: t)
+        print("thread = \(Thread.current)  element == \(num)")
         pthread_mutex_unlock(&mutex)
     }
     

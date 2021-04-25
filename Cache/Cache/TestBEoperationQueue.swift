@@ -7,18 +7,18 @@
 
 class TestBEOperationqueue {
     
-//    var opQueue =  BEOperationQueue.init(maxConcurrentOperations: 3)
+    var opQueue =  BEOperationQueue.init(maxConcurrentOperations: 3)
     
     func test() {
 //        print("------分割线1---------")
-        let opQueue =  BEOperationQueue.init(maxConcurrentOperations: 10)
-        opQueue.scheduleOperation {       print("BE-1-1-default") }
+//        let opQueue =  BEOperationQueue.init(maxConcurrentOperations: 1)
+        opQueue.scheduleOperation(with: { print("BE-1-1-default") }, priority: .default)
         opQueue.scheduleOperation(with: { print("BE-1-2-high") }, priority: .high)
         opQueue.scheduleOperation(with: { print("BE-1-3-low") }, priority: .low)
-        opQueue.scheduleOperation(with: { print("BE-1-4-high") }, priority: .high)
-        opQueue.scheduleOperation(with: { print("BE-1-5-high") }, priority: .high)
+        opQueue.scheduleOperation(with: { print("BE-1-4-low") }, priority: .low)
+        opQueue.scheduleOperation(with: { print("BE-1-5-low") }, priority: .low)
         opQueue.scheduleOperation(with: { print("BE-1-6-low") }, priority: .low)
-        opQueue.scheduleOperation(with: { print("BE-1-7-high") }, priority: .high)
+        opQueue.scheduleOperation(with: { print("BE-1-7-low") }, priority: .low)
         opQueue.scheduleOperation(with: { print("BE-1-8-high") }, priority: .high)
         opQueue.scheduleOperation(with: { print("BE-1-9-high") }, priority: .high)
 //        
@@ -31,7 +31,7 @@ class TestBEOperationqueue {
     
     func test2() {
 //        print("------分割线2---------")
-//        let opQueue = PINOperationQueue(maxConcurrentOperations: 10)
+//        let opQueue = PINOperationQueue(maxConcurrentOperations: 1)
 //        opQueue.scheduleOperation { print("Pin-1-default") }
 //        opQueue.scheduleOperation({ print("Pin--2-high") }, with: .high)
 //        opQueue.scheduleOperation({ print("Pin--3-low") }, with: .low)

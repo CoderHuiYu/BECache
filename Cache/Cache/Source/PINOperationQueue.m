@@ -174,9 +174,11 @@
                                                         data:nil
                                                   completion:nil];
   [self lock];
-    [self locked_addOperation:operation];
+    
+  [self locked_addOperation:operation];
+    NSLog(@"------1");
   [self unlock];
-  
+    NSLog(@"------2");
   [self scheduleNextOperations:NO];
   
   return operation.reference;
@@ -336,7 +338,6 @@
 - (void)scheduleNextOperations:(BOOL)onlyCheckSerial
 {
   [self lock];
-  
     //get next available operation in order, ignoring priority and run it on the serial queue
     if (_serialQueueBusy == NO) {
       PINOperation *operation = [self locked_nextOperationByQueue];

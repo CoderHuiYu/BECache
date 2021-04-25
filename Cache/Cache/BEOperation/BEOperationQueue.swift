@@ -52,7 +52,7 @@ class BEOperationQueue {
      * operationQueue可以管理多个operation
      *  最后，operationQueue.通过串行队列和并行队列来控制operation里面的workitem的执行
      */
-    private lazy var mutex: pthread_mutex_t = {
+    private var mutex: pthread_mutex_t = {
         var mutex = pthread_mutex_t()
         var attr: pthread_mutexattr_t = pthread_mutexattr_t()
         pthread_mutexattr_init(&attr)
@@ -92,7 +92,9 @@ class BEOperationQueue {
     @discardableResult func scheduleOperation(with workItem: @escaping OperationItem, priority: BEOperationQueuePriority = .default) -> BEOperationReference{
         // when the workItem come in, i will arrange it a reference
         let operation = BEOperation.operation(with: priority, reference: nextOperationReference(), workitem: workItem)
-        lockOperation { locked_addOperation(with: operation) }
+        lock()
+        locked_addOperation(with: operation)
+        unlock()
         scheduleNextOperation(with: false)
         return operation.reference!
     }
@@ -114,48 +116,46 @@ class BEOperationQueue {
     }
     
     private func scheduleNextOperation(with onlyCheckSerial: Bool) {
-        //        print("----进入-----")
-        lockOperation {
+        lock()
             if serialQueueBusy == false {
-                guard let operation = locked_nextOperationByQueue() else { return }
-                
-                serialQueueBusy = true
-                serialQueue.async { [weak self] in
-                    //                        print("----执行1-----")
-                    guard let self = self else { return }
-                    operation.workItems.forEach { $0() }
-                    self.group.leave()
-                    //                        print("--------------qqqqqqleave------------------")
-                    self.lockOperation { self.serialQueueBusy = false }
-                    self.scheduleNextOperation(with: true)
+                if let operation = locked_nextOperationByQueue() {
+                    serialQueueBusy = true
+                    serialQueue.async { [weak self] in
+                        if let self = self  {
+                            operation.workItems.forEach { $0() }
+                            self.group.leave()
+                            self.lockOperation { self.serialQueueBusy = false }
+                            self.scheduleNextOperation(with: true)
+                        }
+                    }
                 }
             }
-
-        }
+        unlock()
         
         if onlyCheckSerial { return }
         if maxConcurrentOperations < 2 { return }
         
         semaphoreQueue.async { [weak self] in
-//            print("----执行2-----")
-            guard let self = self else { return }
-            self.concurrentSemaphore.wait()
-            self.lock()
-            let op = self.locked_nextOperationByPriority()
-            self.unlock()
-            guard let operation = op else { self.concurrentSemaphore.signal(); return }
-            self.concurrentQueue.async {
-                operation.workItems.forEach { $0() }
-                self.group.leave()
-//                print("--------------qqqqqqleave------------------")
-                self.concurrentSemaphore.signal()
+            if let self = self {
+                self.concurrentSemaphore.wait()
+                self.lock()
+                let op = self.locked_nextOperationByPriority()
+                self.unlock()
+                if let operation = op {
+                    self.concurrentQueue.async {
+                        operation.workItems.forEach { $0() }
+                        self.group.leave()
+                        self.concurrentSemaphore.signal()
+                    }
+                } else {
+                    self.concurrentSemaphore.signal()
+                }
             }
         }
     }
         
     private func locked_addOperation(with operation: BEOperation) {
         group.enter()
-//        print("--------------enter------------------")
         priorityQueueAdded(with: operation)
         queueOperations.append(operation)
         referenceToOperations[operation.reference as! NSNumber] = operation
@@ -191,31 +191,29 @@ class BEOperationQueue {
         return false
     }
     
-    
     private func locked_nextOperationByQueue() -> BEOperation? {
         let operation = queueOperations[0]
-        locked_removeOperation(with: operation)
-        return operation
+        return locked_removeOperation(with: operation) ? operation : nil
     }
     private func locked_nextOperationByPriority() -> BEOperation? {
         var op = highPriorityOperations[0]
         if op == nil { op = defaultPriorityOperations[0] }
         if op == nil { op = lowPriorityOperations[0] }
-        if op != nil { locked_removeOperation(with: op!) }
-        return op
+        return locked_removeOperation(with: op) ? op : nil
     }
     
-   @discardableResult private func locked_removeOperation(with operation: BEOperation?) -> Bool {
+    @discardableResult private func locked_removeOperation(with operation: BEOperation?) -> Bool {
         guard let op = operation else { return false }
-//    print("---delete----\(String(describing: op.reference))")
-        guard priorityQueueRemoved(with: op) else { return false}
-        queueOperations.remove(element: op)
-        guard let identifier = op.identifier else { return false}
-        identifierToOperations.removeValue(forKey: identifier)
-        return true
+        if priorityQueueRemoved(with: op) {
+            queueOperations.remove(element: op)
+            if let identifier = op.identifier {
+                identifierToOperations.removeValue(forKey: identifier)
+            }
+            return true
+        }
+        return false
     }
     
-   
    @discardableResult private func locked_cancle(operationReference: BEOperationReference?) -> Bool {
         guard let reference = operationReference else { return false }
         let op = referenceToOperations[reference as! NSNumber]
