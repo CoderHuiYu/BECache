@@ -116,6 +116,11 @@ class BEOperationQueue {
     }
     
     private func scheduleNextOperation(with onlyCheckSerial: Bool) {
+        /**
+         *   serialQueue.async  {
+         *       这里面不需要 写 [weak self] 或者 [unowned self] 原因是gcd内部会对self有一个强引用
+         *    }
+         */
         lock()
         if serialQueueBusy == false {
             if let operation = locked_nextOperationByQueue() {
@@ -125,7 +130,6 @@ class BEOperationQueue {
                     self.group.leave()
                     self.lockOperation { self.serialQueueBusy = false }
                     self.scheduleNextOperation(with: true)
-                    
                 }
             }
         }
