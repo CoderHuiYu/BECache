@@ -117,39 +117,36 @@ class BEOperationQueue {
     
     private func scheduleNextOperation(with onlyCheckSerial: Bool) {
         lock()
-            if serialQueueBusy == false {
-                if let operation = locked_nextOperationByQueue() {
-                    serialQueueBusy = true
-                    serialQueue.async { [weak self] in
-                        if let self = self  {
-                            operation.workItems.forEach { $0() }
-                            self.group.leave()
-                            self.lockOperation { self.serialQueueBusy = false }
-                            self.scheduleNextOperation(with: true)
-                        }
-                    }
+        if serialQueueBusy == false {
+            if let operation = locked_nextOperationByQueue() {
+                serialQueueBusy = true
+                serialQueue.async {
+                    operation.workItems.forEach { $0() }
+                    self.group.leave()
+                    self.lockOperation { self.serialQueueBusy = false }
+                    self.scheduleNextOperation(with: true)
+                    
                 }
             }
+        }
         unlock()
         
         if onlyCheckSerial { return }
         if maxConcurrentOperations < 2 { return }
         
-        semaphoreQueue.async { [weak self] in
-            if let self = self {
-                self.concurrentSemaphore.wait()
-                self.lock()
-                let op = self.locked_nextOperationByPriority()
-                self.unlock()
-                if let operation = op {
-                    self.concurrentQueue.async {
-                        operation.workItems.forEach { $0() }
-                        self.group.leave()
-                        self.concurrentSemaphore.signal()
-                    }
-                } else {
+        semaphoreQueue.async {
+            self.concurrentSemaphore.wait()
+            self.lock()
+            let op = self.locked_nextOperationByPriority()
+            self.unlock()
+            if let operation = op {
+                self.concurrentQueue.async {
+                    operation.workItems.forEach { $0() }
+                    self.group.leave()
                     self.concurrentSemaphore.signal()
                 }
+            } else {
+                self.concurrentSemaphore.signal()
             }
         }
     }
@@ -195,6 +192,7 @@ class BEOperationQueue {
         let operation = queueOperations[0]
         return locked_removeOperation(with: operation) ? operation : nil
     }
+    
     private func locked_nextOperationByPriority() -> BEOperation? {
         var op = highPriorityOperations[0]
         if op == nil { op = defaultPriorityOperations[0] }

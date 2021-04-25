@@ -176,9 +176,9 @@
   [self lock];
     
   [self locked_addOperation:operation];
-    NSLog(@"------1");
+//    NSLog(@"------1");
   [self unlock];
-    NSLog(@"------2");
+//    NSLog(@"------2");
   [self scheduleNextOperations:NO];
   
   return operation.reference;

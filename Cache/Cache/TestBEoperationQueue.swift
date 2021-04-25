@@ -7,11 +7,11 @@
 
 class TestBEOperationqueue {
     
-    var opQueue =  BEOperationQueue.init(maxConcurrentOperations: 3)
+//    var opQueue =  BEOperationQueue.init(maxConcurrentOperations: 3)
     
     func test() {
 //        print("------分割线1---------")
-//        let opQueue =  BEOperationQueue.init(maxConcurrentOperations: 1)
+        let opQueue =  BEOperationQueue.init(maxConcurrentOperations: 3)
         opQueue.scheduleOperation(with: { print("BE-1-1-default") }, priority: .default)
         opQueue.scheduleOperation(with: { print("BE-1-2-high") }, priority: .high)
         opQueue.scheduleOperation(with: { print("BE-1-3-low") }, priority: .low)
@@ -24,24 +24,22 @@ class TestBEOperationqueue {
 //        
         
 //        print("------分割线1-end---------")
-        
-        
-        
+
     }
     
     func test2() {
 //        print("------分割线2---------")
-//        let opQueue = PINOperationQueue(maxConcurrentOperations: 1)
-//        opQueue.scheduleOperation { print("Pin-1-default") }
-//        opQueue.scheduleOperation({ print("Pin--2-high") }, with: .high)
-//        opQueue.scheduleOperation({ print("Pin--3-low") }, with: .low)
-//        opQueue.scheduleOperation({ print("Pin--4-high") }, with: .high)
-//        opQueue.scheduleOperation({ print("Pin--5-high") }, with: .high)
-//        opQueue.scheduleOperation({ print("Pin--6-high") }, with: .high)
-//        opQueue.scheduleOperation({ print("Pin--7-high") }, with: .high)
-//        opQueue.scheduleOperation({ print("Pin--8-high") }, with: .high)
-//        opQueue.scheduleOperation({ print("Pin--9-high") }, with: .high)
-//        opQueue.scheduleOperation({ print("Pin--10-high") }, with: .high)
+        let opQueue = PINOperationQueue(maxConcurrentOperations: 3)
+        opQueue.scheduleOperation { print("Pin-1-default") }
+        opQueue.scheduleOperation({ print("Pin--2-high") }, with: .high)
+        opQueue.scheduleOperation({ print("Pin--3-low") }, with: .low)
+        opQueue.scheduleOperation({ print("Pin--4-low") }, with: .low)
+        opQueue.scheduleOperation({ print("Pin--5-low") }, with: .low)
+        opQueue.scheduleOperation({ print("Pin--6-low") }, with: .low)
+        opQueue.scheduleOperation({ print("Pin--7-low") }, with: .low)
+        opQueue.scheduleOperation({ print("Pin--8-low") }, with: .low)
+        opQueue.scheduleOperation({ print("Pin--9-high") }, with: .high)
+        opQueue.scheduleOperation({ print("Pin--10-high") }, with: .high)
         
 //        print("------分割线2-end---------")
     }
