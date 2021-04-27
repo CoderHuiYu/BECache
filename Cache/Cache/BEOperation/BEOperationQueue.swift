@@ -59,10 +59,12 @@ class BEOperationQueue {
         pthread_mutex_init(&mutex, &attr)
         return mutex
     }()
+    
     var _maxConcurrentOperations: Int {
         set { setMaxConcurrentOperationsChanged(newValue: newValue) }
         get { return getMaxConcurrentOperations() }
     }
+    
     private var maxConcurrentOperations = 2
     static let sharedOperationQueue = BEOperationQueue.init(maxConcurrentOperations: 2)
     
@@ -283,7 +285,7 @@ class BEOperationQueue {
         return result
     }
     
-    private func lock() { pthread_mutex_trylock(&mutex) }
+    private func lock() { pthread_mutex_lock(&mutex) }
     private func unlock() { pthread_mutex_unlock(&mutex) }
     deinit { pthread_mutex_destroy(&mutex) }
 }

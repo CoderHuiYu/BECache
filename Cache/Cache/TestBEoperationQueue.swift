@@ -10,7 +10,7 @@ class TestBEOperationqueue {
     //    var opQueue =  BEOperationQueue.init(maxConcurrentOperations: 3)
     
     func test() {
-//        for _ in 0...100 {
+        for _ in 0...100 {
             let opQueue =  BEOperationQueue.init(maxConcurrentOperations: 10)
             opQueue.scheduleOperation(with: { print("BE-1-1-default") }, priority: .default)
             opQueue.scheduleOperation(with: { print("BE-1-2-high") }, priority: .high)
@@ -21,7 +21,7 @@ class TestBEOperationqueue {
             opQueue.scheduleOperation(with: { print("BE-1-7-low") }, priority: .low)
             opQueue.scheduleOperation(with: { print("BE-1-8-high") }, priority: .high)
             opQueue.scheduleOperation(with: { print("BE-1-9-high") }, priority: .high)
-//        }
+        }
     }
     
     func test2() {
