@@ -61,7 +61,7 @@ class BEOperationQueue {
         return mutex
     }()
     
-    private var maxConcurrentOperations = 2 { didSet { maxConcurrentOperationsChanged(oldValue: oldValue) } }
+    private var maxConcurrentOperations = 2
     static let sharedOperationQueue = BEOperationQueue()
     private var queueOperations = SafeArray<BEOperation>()
     private var lowPriorityOperations = SafeArray<BEOperation>()
@@ -83,7 +83,10 @@ class BEOperationQueue {
     public typealias Handler = () -> Void
     public typealias ResultHandler<T> = () -> T
     
-    init(maxConcurrentOperations: Int=2) { self.maxConcurrentOperations = maxConcurrentOperations }
+    init(maxConcurrentOperations: Int=2) {
+        maxConcurrentOperationsChanged(newValue: maxConcurrentOperations)
+        
+    }
     
     @discardableResult func scheduleOperation(with workItem: @escaping OperationItem) -> BEOperationReference {
         return scheduleOperation(with: workItem, priority: .default)
@@ -127,7 +130,7 @@ class BEOperationQueue {
                 serialQueueBusy = true
                 serialQueue.async {
                     operation.workItems.forEach { $0() }
-                    self.group.leave()
+//                    self.group.leave()
                     self.lockOperation { self.serialQueueBusy = false }
                     self.scheduleNextOperation(with: true)
                 }
@@ -146,7 +149,7 @@ class BEOperationQueue {
             if let operation = op {
                 self.concurrentQueue.async {
                     operation.workItems.forEach { $0() }
-                    self.group.leave()
+//                    self.group.leave()
                     self.concurrentSemaphore.signal()
                 }
             } else {
@@ -156,7 +159,7 @@ class BEOperationQueue {
     }
         
     private func locked_addOperation(with operation: BEOperation) {
-        group.enter()
+//        group.enter()
         priorityQueueAdded(with: operation)
         queueOperations.append(operation)
         referenceToOperations[operation.reference as! NSNumber] = operation
@@ -234,9 +237,9 @@ class BEOperationQueue {
         return reference
     }
         
-    private func maxConcurrentOperationsChanged(oldValue: Int) {
+    private func maxConcurrentOperationsChanged(newValue: Int) {
         lock()
-        var difference = maxConcurrentOperations - oldValue
+        var difference = newValue - maxConcurrentOperations
         unlock()
         
         semaphoreQueue.async { [weak self] in
@@ -270,7 +273,3 @@ class BEOperationQueue {
     private func unlock() { pthread_mutex_unlock(&mutex) }
     deinit { pthread_mutex_destroy(&mutex) }
 }
-
-
-
-
