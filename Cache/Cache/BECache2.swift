@@ -7,7 +7,7 @@
 
 import Foundation
 
-class BECache : BECaching {
+class BECache2 : BECaching2 {
     
     private lazy var dataMap: [ String: Codable] = [:]
     
@@ -21,7 +21,7 @@ class BECache : BECaching {
     
 }
 
-public protocol BECaching : AnyObject {
+public protocol BECaching2 : AnyObject {
     func set(object: Codable, key: String)
     func get(key: String) -> Codable?
 }

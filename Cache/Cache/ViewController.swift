@@ -19,10 +19,10 @@ class ViewController: UIViewController {
             
         }
     }
-    
-    var handler: Handler? = {
-        print("i am an handler")
-    }
+//
+//    var handler: Handler? = {
+//        print("i am an handler")
+//    }
     
     var group = DispatchGroup()
     var serailQueue = DispatchQueue(label: "test Serial Queue")
@@ -38,6 +38,10 @@ class ViewController: UIViewController {
     var ts = ThreadSafe()
     override func viewDidLoad() {
         super.viewDidLoad()
+        let started = false
+        assert(started == false, "Operation group already started or canceled.")
+        
+        print(1111111111)
 //        let h = handler
 //        handler = nil
 //        h?()
@@ -58,8 +62,8 @@ class ViewController: UIViewController {
         
 //        group_test()
 //
-        test.test()
-        test.test2()
+//        test.test()
+//        test.test2()
 //        testLock()
        
     }
@@ -115,8 +119,8 @@ class ViewController: UIViewController {
     }
     
     private func testArray_set() {
-        var array = [BECache]()
-        let a = BECache()
+        var array = [BECache2]()
+        let a = BECache2()
         array.append(a)
         array.append(a)
         print(array)
@@ -252,7 +256,7 @@ class ViewController: UIViewController {
                         Coordinate(latitude: -34, longitude: 18))
         ]
         
-        let cache = BECache()
+        let cache = BECache2()
         cache.set(object: places, key: "place")
         
         let data = cache.get(key: "place")

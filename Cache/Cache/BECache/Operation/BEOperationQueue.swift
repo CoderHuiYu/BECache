@@ -22,9 +22,7 @@ public typealias Handler = () -> Void
 public typealias ResultHandler<T> = () -> T
 
 class BEOperation : Equatable {
-    static func == (lhs: BEOperation, rhs: BEOperation) -> Bool {
-        return lhs === rhs
-    }
+    static func == (lhs: BEOperation, rhs: BEOperation) -> Bool { return lhs === rhs }
 
     var priority: BEOperationQueuePriority = .default
     lazy var workItems = [OperationItem]()
