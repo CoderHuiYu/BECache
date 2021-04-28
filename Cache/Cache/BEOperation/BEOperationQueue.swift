@@ -18,6 +18,8 @@ enum BEOperationQueuePriority: Int {
 protocol BEOperationReference {}
 extension NSNumber : BEOperationReference {}
 public typealias OperationItem = () -> Void
+public typealias Handler = () -> Void
+public typealias ResultHandler<T> = () -> T
 
 class BEOperation : Equatable {
     static func == (lhs: BEOperation, rhs: BEOperation) -> Bool {
@@ -42,7 +44,7 @@ class BEOperation : Equatable {
     }
 }
 
-class BEOperationQueue {
+ class BEOperationQueue {
     /**
      * operation 是对workitem的一层包装，一个operation可以管理多个workItem
      * operationQueue可以管理多个operation
@@ -83,9 +85,6 @@ class BEOperationQueue {
     private var referenceToOperations: [NSNumber : BEOperation] = [:]
     private var identifierToOperations: [String : BEOperation] = [:]
     
-    public typealias Handler = () -> Void
-    public typealias ResultHandler<T> = () -> T
-    
     init(maxConcurrentOperations: Int=2) {
         _maxConcurrentOperations = maxConcurrentOperations
         concurrentSemaphore = DispatchSemaphore(value: maxConcurrentOperations - 1)
@@ -110,7 +109,7 @@ class BEOperationQueue {
         lockOperation { referenceToOperations.values.forEach { locked_cancle(operationReference: $0.reference) } }
     }
     
-    func cancle(operationReference: BEOperationReference) -> Bool {
+    @discardableResult func cancle(operationReference: BEOperationReference) -> Bool {
         lock()
         let success = locked_cancle(operationReference: operationReference)
         unlock()

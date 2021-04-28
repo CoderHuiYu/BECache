@@ -20,7 +20,9 @@ class ViewController: UIViewController {
         }
     }
     
-    
+    var handler: Handler? = {
+        print("i am an handler")
+    }
     
     var group = DispatchGroup()
     var serailQueue = DispatchQueue(label: "test Serial Queue")
@@ -36,6 +38,15 @@ class ViewController: UIViewController {
     var ts = ThreadSafe()
     override func viewDidLoad() {
         super.viewDidLoad()
+//        let h = handler
+//        handler = nil
+//        h?()
+//        handler = {
+//            print(" i am changend")
+//        }
+//        handler?()
+//        return
+        
         
 //       array = [ 2, 3, 4, 5]
 //        for index in 2...100 {

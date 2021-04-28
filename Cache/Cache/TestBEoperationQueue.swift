@@ -21,6 +21,7 @@ class TestBEOperationqueue {
 //            opQueue.scheduleOperation(with: { sleep(1); print("BE-1-8-high") }, priority: .high)
 //            opQueue.scheduleOperation(with: { sleep(1);  print("BE-1-9-high") }, priority: .high)
 //        }
+        BEOperationGroup(queue: opQueue)
         
         for _ in 0...20 {
         opQueue.scheduleOperation(with: { print("BE-1-1-default"); sleep(1) }, priority: .default)
