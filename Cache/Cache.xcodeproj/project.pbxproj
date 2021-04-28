@@ -23,6 +23,7 @@
 		E087498B26317FEF0019520A /* TestBEoperationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E087498A26317FEF0019520A /* TestBEoperationQueue.swift */; };
 		E087499C2632B3510019520A /* ThreadSafe.swift in Sources */ = {isa = PBXBuildFile; fileRef = E087499B2632B3510019520A /* ThreadSafe.swift */; };
 		E08749A82632D3AF0019520A /* SafeArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = E08749A72632D3AF0019520A /* SafeArray.swift */; };
+		E0874A2426381AB70019520A /* BEOperationGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0874A2326381AB70019520A /* BEOperationGroup.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		E087498A26317FEF0019520A /* TestBEoperationQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestBEoperationQueue.swift; sourceTree = "<group>"; };
 		E087499B2632B3510019520A /* ThreadSafe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafe.swift; sourceTree = "<group>"; };
 		E08749A72632D3AF0019520A /* SafeArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeArray.swift; sourceTree = "<group>"; };
+		E0874A2326381AB70019520A /* BEOperationGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BEOperationGroup.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +126,7 @@
 				E087497E263016730019520A /* BEOperation */,
 				E087490A262FD05B0019520A /* AppDelegate.swift */,
 				E087490C262FD05B0019520A /* SceneDelegate.swift */,
+				E087499B2632B3510019520A /* ThreadSafe.swift */,
 				E087490E262FD05B0019520A /* ViewController.swift */,
 				E087498A26317FEF0019520A /* TestBEoperationQueue.swift */,
 				E0874942262FD1560019520A /* BECache.swift */,
@@ -175,7 +178,7 @@
 			children = (
 				E0874982263018550019520A /* BEOperationQueue.swift */,
 				E08749A72632D3AF0019520A /* SafeArray.swift */,
-				E087499B2632B3510019520A /* ThreadSafe.swift */,
+				E0874A2326381AB70019520A /* BEOperationGroup.swift */,
 			);
 			path = BEOperation;
 			sourceTree = "<group>";
@@ -313,6 +316,7 @@
 			files = (
 				E087490F262FD05B0019520A /* ViewController.swift in Sources */,
 				E087498B26317FEF0019520A /* TestBEoperationQueue.swift in Sources */,
+				E0874A2426381AB70019520A /* BEOperationGroup.swift in Sources */,
 				E0874975263009DB0019520A /* PINOperationQueue.m in Sources */,
 				E087490B262FD05B0019520A /* AppDelegate.swift in Sources */,
 				E0874976263009DB0019520A /* PINOperationGroup.m in Sources */,

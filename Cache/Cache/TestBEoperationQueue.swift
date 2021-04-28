@@ -10,18 +10,29 @@ class TestBEOperationqueue {
         var opQueue =  BEOperationQueue.init(maxConcurrentOperations: 3)
     
     func test() {
-//        for _ in 0...100 {
-//            let opQueue =  BEOperationQueue.init(maxConcurrentOperations: 4)
-        opQueue.scheduleOperation(with: { print("BE-1-1-default"); sleep(1) }, priority: .default)
-        opQueue.scheduleOperation(with: {  sleep(1); print("BE-1-2-high") }, priority: .high)
-            opQueue.scheduleOperation(with: { sleep(1);  print("BE-1-3-low"); sleep(1) }, priority: .low)
-            opQueue.scheduleOperation(with: {  sleep(1); print("BE-1-4-low"); sleep(1) }, priority: .low)
-            opQueue.scheduleOperation(with: { sleep(1);  print("BE-1-5-low"); sleep(1) }, priority: .low)
-            opQueue.scheduleOperation(with: { sleep(1);  print("BE-1-6-low"); sleep(1) }, priority: .low)
-            opQueue.scheduleOperation(with: { sleep(1);  print("BE-1-7-low"); sleep(1) }, priority: .low)
-            opQueue.scheduleOperation(with: { sleep(1); print("BE-1-8-high") }, priority: .high)
-            opQueue.scheduleOperation(with: { sleep(1);  print("BE-1-9-high") }, priority: .high)
+//        for _ in 0...20 {
+//        opQueue.scheduleOperation(with: { print("BE-1-1-default"); sleep(1) }, priority: .default)
+//        opQueue.scheduleOperation(with: {  sleep(1); print("BE-1-2-high") }, priority: .high)
+//            opQueue.scheduleOperation(with: { sleep(1);  print("BE-1-3-low") }, priority: .low)
+//            opQueue.scheduleOperation(with: { sleep(1); print("BE-1-4-low") }, priority: .low)
+//            opQueue.scheduleOperation(with: { sleep(1);  print("BE-1-5-low") }, priority: .low)
+//            opQueue.scheduleOperation(with: { sleep(1);  print("BE-1-6-low") }, priority: .low)
+//            opQueue.scheduleOperation(with: { sleep(1);  print("BE-1-7-low") }, priority: .low)
+//            opQueue.scheduleOperation(with: { sleep(1); print("BE-1-8-high") }, priority: .high)
+//            opQueue.scheduleOperation(with: { sleep(1);  print("BE-1-9-high") }, priority: .high)
 //        }
+        
+        for _ in 0...20 {
+        opQueue.scheduleOperation(with: { print("BE-1-1-default"); sleep(1) }, priority: .default)
+        opQueue.scheduleOperation(with: { print("BE-1-2-high") }, priority: .high)
+            opQueue.scheduleOperation(with: { print("BE-1-3-low") }, priority: .low)
+            opQueue.scheduleOperation(with: {  print("BE-1-4-low") }, priority: .low)
+            opQueue.scheduleOperation(with: { print("BE-1-5-low") }, priority: .low)
+            opQueue.scheduleOperation(with: { print("BE-1-6-low") }, priority: .low)
+            opQueue.scheduleOperation(with: { print("BE-1-7-low") }, priority: .low)
+            opQueue.scheduleOperation(with: { print("BE-1-8-high") }, priority: .high)
+            opQueue.scheduleOperation(with: { print("BE-1-9-high") }, priority: .high)
+        }
     }
     
     func test2() {

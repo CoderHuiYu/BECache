@@ -96,6 +96,7 @@ class ThreadSafe {
         unlock()
     }
     
+    // trylock 就错了
     private func lock() { pthread_mutex_trylock(&mutex) }
     private func unlock() { pthread_mutex_unlock(&mutex) }
     deinit { pthread_mutex_destroy(&mutex) }

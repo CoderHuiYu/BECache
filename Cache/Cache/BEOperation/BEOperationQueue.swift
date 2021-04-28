@@ -12,9 +12,7 @@ extension Int {
 }
 
 enum BEOperationQueuePriority: Int {
-    case low
-    case `default`
-    case high
+    case low, `default`, high
 }
 
 protocol BEOperationReference {}
@@ -42,7 +40,6 @@ class BEOperation : Equatable {
     func add(with workItem: @escaping OperationItem) {
         workItems.append(workItem)
     }
-    
 }
 
 class BEOperationQueue {
@@ -101,9 +98,7 @@ class BEOperationQueue {
     @discardableResult func scheduleOperation(with workItem: @escaping OperationItem, priority: BEOperationQueuePriority = .default) -> BEOperationReference{
         // when the workItem come in, i will arrange it a reference
         let operation = BEOperation.operation(with: priority, reference: nextOperationReference(), workitem: workItem)
-        lock()
-        locked_addOperation(with: operation)
-        unlock()
+        lockOperation { locked_addOperation(with: operation) }
         scheduleNextOperation(with: false)
         return operation.reference!
     }
@@ -112,9 +107,7 @@ class BEOperationQueue {
     }
     
     func cancleAll() {
-        lockOperation {
-            referenceToOperations.values.forEach { locked_cancle(operationReference: $0.reference) }
-        }
+        lockOperation { referenceToOperations.values.forEach { locked_cancle(operationReference: $0.reference) } }
     }
     
     func cancle(operationReference: BEOperationReference) -> Bool {
@@ -207,9 +200,7 @@ class BEOperationQueue {
     }
     
     private func locked_nextOperationByPriority() -> BEOperation? {
-        var op = highPriorityOperations[0]
-        if op == nil { op = defaultPriorityOperations[0] }
-        if op == nil { op = lowPriorityOperations[0] }
+        guard let op = highPriorityOperations[0] ?? defaultPriorityOperations[0] ?? lowPriorityOperations[0] else { return nil }
         return locked_removeOperation(with: op) ? op : nil
     }
     
