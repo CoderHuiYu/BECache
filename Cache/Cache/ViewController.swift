@@ -38,6 +38,7 @@ class ViewController: UIViewController {
     var ts = ThreadSafe()
     override func viewDidLoad() {
         super.viewDidLoad()
+        test.test()
         let started = false
         assert(started == false, "Operation group already started or canceled.")
         

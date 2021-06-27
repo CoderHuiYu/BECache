@@ -7,21 +7,20 @@
 
 class TestBEOperationqueue {
     
-        var opQueue =  BEOperationQueue.init(maxConcurrentOperations: 3)
+    var opQueue =  BEOperationQueue.init(maxConcurrentOperations: 1)
     
     func test() {
 //        for _ in 0...20 {
         opQueue.scheduleOperation(with: { print("BE-1-1-default"); sleep(1) }, priority: .default)
-        opQueue.scheduleOperation(with: {  sleep(1); print("BE-2-high") }, priority: .high)
+        opQueue.scheduleOperation(with: { sleep(1); print("BE-2-high") }, priority: .high)
         opQueue.scheduleOperation(with: { sleep(1);  print("BE-3-low") }, priority: .low)
         opQueue.scheduleOperation(with: { sleep(1); print("BE-4-low") }, priority: .low)
         opQueue.scheduleOperation(with: { sleep(1);  print("BE-5-low") }, priority: .low)
         opQueue.scheduleOperation(with: { sleep(1);  print("BE-6-low") }, priority: .low)
-        
         opQueue.scheduleOperation(with: { sleep(1);  print("BE-7-low") }, priority: .low)
         opQueue.scheduleOperation(with: { sleep(1); print("BE-8-high") }, priority: .high)
         opQueue.scheduleOperation(with: { sleep(1);  print("BE-9-high") }, priority: .high)
-        opQueue.cancleAll()
+//        opQueue.cancleAll()
         //        }
 //        BEOperationGroup(queue: opQueue)
         

@@ -120,6 +120,7 @@ class BEOperation : Equatable {
          *       这里面不需要 写 [weak self] 或者 [unowned self] 原因是gcd内部会对self有一个强引用
          *    }
          */
+        print("----------------1---------------- \(serialQueueBusy)")
         lock()
         if serialQueueBusy == false {
             if let operation = locked_nextOperationByQueue() {
@@ -128,6 +129,10 @@ class BEOperation : Equatable {
                     operation.workItems.forEach { $0() }
                     self.group.leave()
                     self.lockOperation { self.serialQueueBusy = false }
+                    print("----------------2----------------")
+                    // 加下面这段代码，使整个operation驱动起来了
+                    // 因为近来字后就将  serialQueueBusy = true,其它的就直接略过去了 没有进入执行代码
+                    // 加入这个  self.scheduleNextOperation(with: true)之后，会进入操作数组中取任务然后执行下去
                     self.scheduleNextOperation(with: true)
                 }
             }
