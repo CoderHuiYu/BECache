@@ -102,7 +102,6 @@ class BEOperationGroup {
     }
     
     func waitUntilComplete() {
-        // 有点多此一举,已经有notify了
         start()
         let _ = group.wait(timeout: .distantFuture)
         runCompletionIfNeeded()

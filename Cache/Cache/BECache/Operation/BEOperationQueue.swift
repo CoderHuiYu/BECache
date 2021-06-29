@@ -76,7 +76,7 @@ class BEOperation : Equatable {
     private var semaphoreQueue = DispatchQueue(label: "BEOperation Semaphore Queue")
     private var concurrentQueue = DispatchQueue(label: "BEOperation Concurrent Queue", attributes: .concurrent)
     
-    private var concurrentSemaphore: DispatchSemaphore?
+    private var concurrentSemaphore: DispatchSemaphore? // 控制并发线程的数量
     private var serialQueueBusy = false
     private var operationReferenceCount = 0
     

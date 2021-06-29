@@ -10,22 +10,29 @@ import Foundation
  class BEMemoryCache {
     
     var name: String = ""
+
+    
     var totalCost: Int {
-        set { lock(); _totalCost = newValue; unlock() }
         get { return get(value: _totalCost) }
     }
+    
     var costLimit: Int {
         set { lock(); _costLimit = newValue; unlock() }
         get { return get(value: _costLimit) }
     }
     var ageLimit = TimeInterval()
-    var ttlCache = true // 存的对象有更长的保存周期
+    // 存的对象有更长的保存周期
+    var ttlCache: Bool {
+        set { lock(); _ttlCache = newValue; unlock() }
+        get { return get(value: _ttlCache) }
+    }
     var removeAllObjectsOnMemoryWarning = true
     var removeAllObjectsOnEnteringBackground = false
     
     private var _name: String = ""
     private var _totalCost = 0
     private var _costLimit = 0
+    private var _ttlCache = false
     private var _ageLimit = TimeInterval()
     private var _willAddObjectHandler: BECacheObjectHandler?
     private var _willRemoveObjectHandler: BECacheObjectHandler?
@@ -75,7 +82,7 @@ import Foundation
     
     private var dictionary = [String: Any]()
     private var createdDates = [String: Date]()
-    private var accessDates = [String: Any]()
+    private var accessDates = [String: Date]()
     private var costs = [String: Int]()
     private var ageLimits = [String: TimeInterval]()
     
@@ -102,6 +109,30 @@ import Foundation
     }
     
     func trimToCostByDate(cost: Int) {
+        trimToCostLimitByDate(limit: cost)
+    }
+    
+    func trimToCostLimitByDate(limit: Int) {
+        if ttlCache { removeExpiredObjects() }
+        var totalCost = 0
+        
+        lock()
+        totalCost = _totalCost
+        let keysSortedByAccessDate = accessDates.sorted { return $0.value.compare($1.value) == .orderedAscending }
+        unlock()
+        
+        if totalCost <= limit { return }
+        
+        for (key,_) in keysSortedByAccessDate {
+            removeObjectAndExecuteBlocksForKey(key: key)
+            
+            lock()
+            totalCost = _totalCost // 执行完后removeObjectAndExecuteBlocksForKey(key: key) _totalcost的值会发生变化
+            unlock()
+            
+            //
+            if totalCost <= limit { break }
+        }
         
     }
     
@@ -186,15 +217,15 @@ extension BEMemoryCache : BECaching {
     }
     
     func setObject(object: Any?, key: String) {
-        
+        setObject(object: object, key: key, cost: 0)
     }
     
     func setObject(object: Any?, key: String, ageLimit: TimeInterval) {
-        
+        setObject(object: object, key: key, cost: 0, ageLimit: ageLimit)
     }
     
     func setObject(object: Any?, key: String, cost: Int) {
-        
+        setObject(object: object, key: key, cost: cost, ageLimit: 0)
     }
     
     func setObject(object: Any?, key: String, cost: Int, ageLimit: TimeInterval) {
@@ -213,9 +244,10 @@ extension BEMemoryCache : BECaching {
         let oldCost = costs[key] ?? 0
         _totalCost -= oldCost
 
-        let dateNow = Date()
+        let now = Date()
         dictionary[key] = object
-        createdDates[key] = dateNow
+        createdDates[key] = now
+        accessDates[key] = now
         costs[key] = cost
         
         if ageLimit > 0.0 { ageLimits[key] = ageLimit } else { ageLimits.removeValue(forKey: key) }
@@ -236,7 +268,44 @@ extension BEMemoryCache : BECaching {
     }
     
     func removeExpiredObjects() {
+        lock()
+        // 这里先copy一份，这样是为了读写安全考虑
+        let createdDates = createdDates
+        let ageLimits = ageLimits
+        unlock()
         
+        let now = Date()
+        for (key,ageLimit) in ageLimits {
+            let try_createDate: Date? = createdDates[key]
+            guard let createDate = try_createDate else { continue }
+            
+            let expirationDate: Date = createDate.addingTimeInterval(ageLimit)
+            if expirationDate.compare(now) == .orderedAscending { // 根据时间进行比对
+                removeObjectAndExecuteBlocksForKey(key: key)
+            }
+        }
+    }
+    
+    private func removeObjectAndExecuteBlocksForKey(key: String) {
+        lock()
+        let objct = dictionary[key]
+        let cost = costs[key]
+        let willRemoveObjectHandler = _willRemoveObjectHandler
+        let didRemoveObjectHandler = _didRemoveObjectHandler
+        unlock()
+        
+        willRemoveObjectHandler?(self, key, objct)
+        
+        lock()
+        _totalCost -= cost ?? 0
+        dictionary.removeValue(forKey: key)
+        createdDates.removeValue(forKey: key)
+        accessDates.removeValue(forKey: key)
+        costs.removeValue(forKey: key)
+        ageLimits.removeValue(forKey: key)
+        unlock()
+        
+        didRemoveObjectHandler?(self, key, objct)
     }
     
     func removeAllObjects() {

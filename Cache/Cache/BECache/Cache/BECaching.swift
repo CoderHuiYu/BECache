@@ -11,7 +11,7 @@ protocol CacheObjectSubscripting {
     /**
      * This method enables using literals on the receiving object, such as `id object = cache[@"key"];`.
      */
-   func objectForKeyedSubscript(key: String) -> Any
+    func objectForKeyedSubscript(key: String) -> Any
     /**
      * This method enables using literals on the receiving object, such as `cache[@"key"] = object;`.*
      */
