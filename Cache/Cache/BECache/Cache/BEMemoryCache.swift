@@ -11,16 +11,14 @@ import Foundation
     
     var name: String = ""
 
-    
     var totalCost: Int {
         get { return get(value: _totalCost) }
     }
-    
+
     var costLimit: Int {
         set { lock(); _costLimit = newValue; unlock() }
         get { return get(value: _costLimit) }
     }
-    var ageLimit = TimeInterval()
     // 存的对象有更长的保存周期
     var ttlCache: Bool {
         set { lock(); _ttlCache = newValue; unlock() }
@@ -95,17 +93,23 @@ import Foundation
     }
     
     func trimToCostAsync(cost: Int, completion: BECacheHandler?) {
-        
+        operationQueue?.scheduleOperation(with: {
+            self.trimToCost(cost: cost)
+            completion?(self)
+        }, priority: .low)
     }
     
     func trimToCostByDateAsync(cost: Int, completion: BECacheHandler?) {
-        
+        operationQueue?.scheduleOperation(with: {
+            self.trimToCostByDate(cost: cost)
+            completion?(self)
+        }, priority: .low)
     }
     
     //- (void)enumerateObjectsWithBlockAsync:(PINCacheObjectEnumerationBlock)block completionBlock:(nullable PINCacheBlock)completionBlock;
     
     func trimToCost(cost: Int) {
-        
+        trimToCostLimitByDate(limit: cost)
     }
     
     func trimToCostByDate(cost: Int) {
@@ -169,51 +173,96 @@ import Foundation
 extension BEMemoryCache : BECaching {
     
     func containsObjectForKeyAsync(key: String, completion: BECacheObjectContainmentHandler?) {
+        if completion == nil { return }
+        
+        operationQueue?.scheduleOperation(with: {
+            let contain = self.containsObjectForKey(key: key)
+            completion?(contain)
+        }, priority: .high)
         
     }
     
     func objectForKeyAsync(key: String, completion: BECacheObjectHandler?) {
-        
+        guard  let completion = completion else { return }
+        operationQueue?.scheduleOperation(with: {
+            let object = self.objectForKey(key: key)
+            completion(self,key,object)
+        }, priority: .high)
     }
     
     func setObjectAsync(object: Any, key: String, completion: BECacheObjectHandler?) {
-        
+        setObjectAsync(object: object, key: key, cost: 0, completion: completion)
     }
     
     func setObjectAsync(object: Any, key: String, ageLimit: TimeInterval, completion: BECacheObjectHandler?) {
-        
+        setObjectAsync(object: object, key: key, cost: 0, ageLimit: ageLimit, completion: completion)
     }
     
     func setObjectAsync(object: Any, key: String, cost: Int, completion: BECacheObjectHandler?) {
-        
+        setObjectAsync(object: object, key: key, cost: cost, ageLimit: 0, completion: completion)
     }
     
     func setObjectAsync(object: Any, key: String, cost: Int, ageLimit: TimeInterval, completion: BECacheObjectHandler?) {
-        
+        operationQueue?.scheduleOperation(with: {
+            self.setObject(object: object, key: key, cost: cost, ageLimit: ageLimit)
+        }, priority: .high)
     }
     
     func removeObjectForKeyAsync(key: String, completion: BECacheObjectHandler?) {
-        
+        operationQueue?.scheduleOperation(with: {
+            self.removeObjectForKey(key: key)
+            completion?(self, key, nil)
+        }, priority: .low)
     }
     
     func trimToDateAsync(date: Date, completion: BECacheHandler?) {
-        
+        operationQueue?.scheduleOperation(with: {
+            self.trimToDate(date: date)
+            completion?(self)
+        }, priority: .low)
     }
     
     func removeExpiredObjectsAsync(Handler: BECacheHandler?) {
-        
+        operationQueue?.scheduleOperation(with: {
+            self.removeExpiredObjects()
+            Handler?(self)
+        }, priority: .low)
     }
     
     func removeAllObjectsAsync(Handler: BECacheHandler?) {
-        
+        operationQueue?.scheduleOperation(with: {
+            self.removeAllObjects()
+            Handler?(self)
+        }, priority: .low)
     }
     
+    // MARK - Public Synchronous Methods -
+    
     func containsObjectForKey(key: String) -> Bool {
-        return true
+        
+        lock()
+        let containsObject = dictionary[key] != nil
+        unlock()
+        
+        return containsObject
     }
     
     func objectForKey(key: String) -> Any? {
-        return nil
+        let now = Date()
+        lock()
+        var object: Any?
+        let ageLimit = ageLimits[key] ?? 0
+        if !self.ttlCache || ageLimit <= 0 || (createdDates[key] ?? Date()).timeIntervalSince(now) < ageLimit {
+            object = dictionary[key]
+        }
+        unlock()
+        
+        if object != nil {
+            lock()
+            accessDates[key] = now
+            unlock()
+        }
+        return object
     }
     
     func setObject(object: Any?, key: String) {
@@ -260,11 +309,16 @@ extension BEMemoryCache : BECaching {
     }
     
     func removeObjectForKey(key: String) {
-        
+        removeObjectAndExecuteBlocksForKey(key: key)
     }
     
     func trimToDate(date: Date) {
+        if date == Date.distantPast {
+            removeAllObjects()
+            return
+        }
         
+    
     }
     
     func removeExpiredObjects() {
@@ -309,7 +363,22 @@ extension BEMemoryCache : BECaching {
     }
     
     func removeAllObjects() {
+        lock()
+        let willRemoveAllObjectsHandler = _willRemoveAllObjectsHandler
+        let didRemoveAllObjectsHandler = _didRemoveAllObjectsHandler
+        unlock()
         
+        willRemoveAllObjectsHandler?(self)
+        
+        lock()
+        dictionary.removeAll()
+        createdDates.removeAll()
+        accessDates.removeAll()
+        costs.removeAll()
+        ageLimits.removeAll()
+        unlock()
+        
+        didRemoveAllObjectsHandler?(self)
     }
     
 }

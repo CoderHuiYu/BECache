@@ -28,9 +28,7 @@
 		E0874A31263933350019520A /* BEMemoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0874A30263933350019520A /* BEMemoryCache.swift */; };
 		E0E2CB502689DDAE002F2FAC /* TestCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E2CB4F2689DDAE002F2FAC /* TestCode.swift */; };
 		E0E2CB522689DDE5002F2FAC /* TestBEMeoryCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E2CB512689DDE5002F2FAC /* TestBEMeoryCache.swift */; };
-		E0E2CB612689F602002F2FAC /* PINMemoryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = E0E2CB5C2689F602002F2FAC /* PINMemoryCache.m */; };
-		E0E2CB622689F602002F2FAC /* PINCache.m in Sources */ = {isa = PBXBuildFile; fileRef = E0E2CB5E2689F602002F2FAC /* PINCache.m */; };
-		E0E2CB632689F602002F2FAC /* PINDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = E0E2CB602689F602002F2FAC /* PINDiskCache.m */; };
+		E0E2CB70268DC132002F2FAC /* BEDiskCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0E2CB6F268DC132002F2FAC /* BEDiskCache.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,15 +82,7 @@
 		E0874A30263933350019520A /* BEMemoryCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BEMemoryCache.swift; sourceTree = "<group>"; };
 		E0E2CB4F2689DDAE002F2FAC /* TestCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCode.swift; sourceTree = "<group>"; };
 		E0E2CB512689DDE5002F2FAC /* TestBEMeoryCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestBEMeoryCache.swift; sourceTree = "<group>"; };
-		E0E2CB582689F602002F2FAC /* PINMemoryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PINMemoryCache.h; sourceTree = "<group>"; };
-		E0E2CB592689F602002F2FAC /* PINCacheMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PINCacheMacros.h; sourceTree = "<group>"; };
-		E0E2CB5A2689F602002F2FAC /* PINCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PINCache.h; sourceTree = "<group>"; };
-		E0E2CB5B2689F602002F2FAC /* PINDiskCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PINDiskCache.h; sourceTree = "<group>"; };
-		E0E2CB5C2689F602002F2FAC /* PINMemoryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PINMemoryCache.m; sourceTree = "<group>"; };
-		E0E2CB5D2689F602002F2FAC /* PINCacheObjectSubscripting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PINCacheObjectSubscripting.h; sourceTree = "<group>"; };
-		E0E2CB5E2689F602002F2FAC /* PINCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PINCache.m; sourceTree = "<group>"; };
-		E0E2CB5F2689F602002F2FAC /* PINCaching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PINCaching.h; sourceTree = "<group>"; };
-		E0E2CB602689F602002F2FAC /* PINDiskCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PINDiskCache.m; sourceTree = "<group>"; };
+		E0E2CB6F268DC132002F2FAC /* BEDiskCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BEDiskCache.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +201,7 @@
 			children = (
 				E0874A2B263931DC0019520A /* BECaching.swift */,
 				E0874A30263933350019520A /* BEMemoryCache.swift */,
+				E0E2CB6F268DC132002F2FAC /* BEDiskCache.swift */,
 			);
 			path = Cache;
 			sourceTree = "<group>";
@@ -227,15 +218,6 @@
 		E0E2CB402689B104002F2FAC /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				E0E2CB5A2689F602002F2FAC /* PINCache.h */,
-				E0E2CB5E2689F602002F2FAC /* PINCache.m */,
-				E0E2CB592689F602002F2FAC /* PINCacheMacros.h */,
-				E0E2CB5D2689F602002F2FAC /* PINCacheObjectSubscripting.h */,
-				E0E2CB5F2689F602002F2FAC /* PINCaching.h */,
-				E0E2CB5B2689F602002F2FAC /* PINDiskCache.h */,
-				E0E2CB602689F602002F2FAC /* PINDiskCache.m */,
-				E0E2CB582689F602002F2FAC /* PINMemoryCache.h */,
-				E0E2CB5C2689F602002F2FAC /* PINMemoryCache.m */,
 			);
 			name = Source;
 			path = "../../../../Downloads/PINCache-master/Source";
@@ -373,8 +355,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E087490F262FD05B0019520A /* ViewController.swift in Sources */,
+				E0E2CB70268DC132002F2FAC /* BEDiskCache.swift in Sources */,
 				E087498B26317FEF0019520A /* TestBEoperationQueue.swift in Sources */,
-				E0E2CB612689F602002F2FAC /* PINMemoryCache.m in Sources */,
 				E0874A2426381AB70019520A /* BEOperationGroup.swift in Sources */,
 				E0874975263009DB0019520A /* PINOperationQueue.m in Sources */,
 				E087490B262FD05B0019520A /* AppDelegate.swift in Sources */,
@@ -382,12 +364,10 @@
 				E087490D262FD05B0019520A /* SceneDelegate.swift in Sources */,
 				E0874943262FD1560019520A /* BECache2.swift in Sources */,
 				E0874983263018550019520A /* BEOperationQueue.swift in Sources */,
-				E0E2CB622689F602002F2FAC /* PINCache.m in Sources */,
 				E08749A82632D3AF0019520A /* SafeArray.swift in Sources */,
 				E087499C2632B3510019520A /* ThreadSafe.swift in Sources */,
 				E087493E262FD1290019520A /* Coordinate.swift in Sources */,
 				E0E2CB522689DDE5002F2FAC /* TestBEMeoryCache.swift in Sources */,
-				E0E2CB632689F602002F2FAC /* PINDiskCache.m in Sources */,
 				E0874A31263933350019520A /* BEMemoryCache.swift in Sources */,
 				E0874A2C263931DC0019520A /* BECaching.swift in Sources */,
 				E0E2CB502689DDAE002F2FAC /* TestCode.swift in Sources */,
